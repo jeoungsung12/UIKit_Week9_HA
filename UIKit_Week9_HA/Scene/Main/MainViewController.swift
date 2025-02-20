@@ -29,7 +29,7 @@ final class MainViewController: BaseViewController {
         settingBarBtn.rx.tap
             .asDriver()
             .drive(with: self) { owner, _ in
-//                owner.push(<#T##destination: UIViewController##UIViewController#>)
+                owner.push(SettingViewController())
             }
             .disposed(by: disposeBag)
     }
