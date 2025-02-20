@@ -35,11 +35,11 @@ final class SettingViewController: BaseViewController {
             .bind(with: self) { owner, type in
                 switch SettingViewModel.SettingType.allCases[type.rawValue] {
                 case .setName:
-                    
+                    owner.push(SettingNameViewController())
                 case .changeProfile:
-                    
+                    owner.push(SettingNameViewController())
                 case .reload:
-                    
+                    owner.push(SettingNameViewController())
                 }
             }
             .disposed(by: disposeBag)
