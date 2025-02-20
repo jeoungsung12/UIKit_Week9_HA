@@ -32,6 +32,10 @@ final class DialogViewController: BaseViewController {
         super.viewDidLoad()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
     override func setBinding() {
         let output = viewModel.transform(input)
         

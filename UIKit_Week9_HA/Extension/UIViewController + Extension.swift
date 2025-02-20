@@ -38,7 +38,7 @@ extension UIViewController {
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = apperanceColor
         appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
-        appearance.shadowColor = nil
+//        appearance.shadowColor = nil
         
         navigationBar.tintColor = color
         navigationBar.standardAppearance = appearance

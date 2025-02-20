@@ -41,7 +41,7 @@ final class OnboardingViewController: BaseViewController {
                 let vc = DialogViewController()
                 vc.input.iconImageTrigger.onNext(model)
                 vc.modalTransitionStyle = .crossDissolve
-                vc.modalPresentationStyle = .fullScreen
+                vc.modalPresentationStyle = .overCurrentContext
                 self.present(vc, animated: true)
             }
         }
