@@ -49,8 +49,10 @@ final class ProfileView: BaseView {
     
     func configure(_ model: IconModel?) {
         guard let model = model else { return }
-        titleLabel.text = model.title
-        iconImageView.image = UIImage(named: model.image)
+        UIView.animate(withDuration: 1.0) {
+            self.titleLabel.text = model.title
+            self.iconImageView.image = UIImage(named: model.image)
+        }
     }
     
 }

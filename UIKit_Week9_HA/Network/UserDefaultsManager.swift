@@ -48,7 +48,7 @@ final class UserDefaultsManager {
             nickname: "대장",
             foodValue: 0,
             waterValue: 0,
-            levelValue: 0
+            levelValue: 1
         )
     )
     var userInfo

@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 struct IconModel: Codable {
-    let image: String
+    var image: String
     let title: String
     
     var description: String {

@@ -23,9 +23,11 @@ final class SettingViewController: BaseViewController {
         SettingViewModel.Output().settingList
             .asDriver()
             .drive(tableView.rx.items(cellIdentifier: "Cell", cellType: UITableViewCell.self)) { row, element, cell in
-                cell.textLabel?.text = element.title
-                cell.imageView?.image = UIImage(systemName: element.image)
                 cell.tintColor = .labelText
+                cell.backgroundColor = .background
+                cell.textLabel?.text = element.title
+                cell.contentView.backgroundColor = .background
+                cell.imageView?.image = UIImage(systemName: element.image)
             }
             .disposed(by: disposeBag)
             
@@ -48,6 +50,7 @@ final class SettingViewController: BaseViewController {
     override func configureView() {
         setNavigation("설정")
         self.view.backgroundColor = .background
+        tableView.backgroundColor = .background
         tableView.showsVerticalScrollIndicator = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }

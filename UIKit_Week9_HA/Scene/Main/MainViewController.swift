@@ -12,6 +12,8 @@ import RxCocoa
 
 final class MainViewController: BaseViewController {
     private let settingBarBtn = UIBarButtonItem(image: UIImage(systemName: "person.circle"), style: .plain, target: nil, action: nil)
+    private lazy var gestureTapped = UITapGestureRecognizer(target: self, action: #selector(self.tapGesture))
+    private let containerView = UIView()
     private let bubbleImageView = UIImageView()
     private let bubbleLabel = UILabel()
     private let profileView = ProfileView()
@@ -26,7 +28,10 @@ final class MainViewController: BaseViewController {
     }
     
     override func setBinding() {
-        let input = MainViewModel.Input()
+        let input = MainViewModel.Input(
+            foodBtnTrigger: PublishSubject<String>(),
+            waterBtnTrigger: PublishSubject<String>()
+        )
         let output = viewModel.transform(input)
         
         settingBarBtn.rx.tap
@@ -36,21 +41,40 @@ final class MainViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
+        gameView.foodButton.rx.tap
+            .withLatestFrom(gameView.foodTextField.rx.text)
+            .bind(with: self, onNext: { owner, value in
+                input.foodBtnTrigger.onNext(value ?? "1")
+            })
+            .disposed(by: disposeBag)
+        
+        gameView.waterButton.rx.tap
+            .withLatestFrom(gameView.waterTextField.rx.text)
+            .bind(with: self, onNext: { owner, value in
+                input.waterBtnTrigger.onNext(value ?? "1")
+            })
+            .disposed(by: disposeBag)
+        
         output.userInfoResult
             .drive(with: self) { owner, model in
                 owner.setNavigation(model.nickname + "님의 다마고치")
                 owner.profileView.configure(model.iconData)
                 owner.levelLabel.text = model.statusValue
+                [owner.gameView.foodTextField, owner.gameView.waterTextField]
+                    .forEach {
+                        $0.text = nil
+                    }
             }
             .disposed(by: disposeBag)
         
         //TODO: SetValue
-        bubbleLabel.text = "테이블뷰컨트롤러와 뷰컨트롤러는 어떠너 차이가 있을까요?"
+        bubbleLabel.text = "테이블뷰컨트롤러와 뷰컨트롤러는 어떤 차이가 있을까요?"
     }
     
     override func configureView() {
         self.view.backgroundColor = .background
         self.navigationItem.rightBarButtonItem = settingBarBtn
+        self.containerView.backgroundColor = .background
         bubbleImageView.image = UIImage(named: "bubble")
         bubbleImageView.contentMode = .scaleToFill
         
@@ -66,10 +90,17 @@ final class MainViewController: BaseViewController {
     override func configureHierarchy() {
         bubbleImageView.addSubview(bubbleLabel)
         [bubbleImageView, profileView, levelLabel, gameView]
-            .forEach({ self.view.addSubview($0) })
+            .forEach({ self.containerView.addSubview($0) })
+        self.view.addSubview(containerView)
+        self.view.addGestureRecognizer(gestureTapped)
     }
     
     override func configureLayout() {
+        containerView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview()
+            make.bottom.equalTo(self.view.keyboardLayoutGuide.snp.top)
+        }
+        
         bubbleImageView.snp.makeConstraints { make in
             make.height.equalToSuperview().dividedBy(5)
             make.horizontalEdges.equalToSuperview().inset(52)
@@ -98,7 +129,6 @@ final class MainViewController: BaseViewController {
             make.top.equalTo(levelLabel.snp.bottom).offset(12)
             make.bottom.lessThanOrEqualToSuperview().inset(24)
         }
-        
     }
     
     deinit {

@@ -12,10 +12,10 @@ final class GameView: BaseView {
     private let foodStackView = UIStackView()
     private let waterStackView = UIStackView()
     
-    private let foodTextField = UITextField()
-    private let foodButton = UIButton()
-    private let waterTextField = UITextField()
-    private let waterButton = UIButton()
+    let foodTextField = UITextField()
+    let foodButton = UIButton()
+    let waterTextField = UITextField()
+    let waterButton = UIButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,6 +33,7 @@ final class GameView: BaseView {
         [foodTextField, waterTextField].forEach({
             $0.textColor = .labelText
             $0.textAlignment = .center
+            $0.keyboardType = .numberPad
             $0.font = .boldSystemFont(ofSize: 13)
             
             let underlineView = UIView()
