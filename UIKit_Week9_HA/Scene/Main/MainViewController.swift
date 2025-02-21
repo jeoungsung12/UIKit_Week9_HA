@@ -26,6 +26,9 @@ final class MainViewController: BaseViewController {
     }
     
     override func setBinding() {
+        let input = MainViewModel.Input()
+        let output = viewModel.transform(input)
+        
         settingBarBtn.rx.tap
             .asDriver()
             .drive(with: self) { owner, _ in
@@ -33,12 +36,16 @@ final class MainViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
         
-        //TODO: SetValue
-        setNavigation("대장님의 다마고치")
-        profileView.configure(IconModel(image: "1-6", title: "방실방실 다마고치"))
+        output.userInfoResult
+            .drive(with: self) { owner, model in
+                owner.setNavigation(model.nickname + "님의 다마고치")
+                owner.profileView.configure(model.iconData)
+                owner.levelLabel.text = model.statusValue
+            }
+            .disposed(by: disposeBag)
         
+        //TODO: SetValue
         bubbleLabel.text = "테이블뷰컨트롤러와 뷰컨트롤러는 어떠너 차이가 있을까요?"
-        levelLabel.text = "LV1 밥알0개 물방울0개"
     }
     
     override func configureView() {

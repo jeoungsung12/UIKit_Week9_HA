@@ -8,17 +8,26 @@
 import Foundation
 
 @propertyWrapper
-struct DefaultsStruct<T> {
+struct DefaultsStruct<T: Codable> {
     let key: String
     let defaultValue: T
     
     var wrappedValue: T {
         get {
-            UserDefaults.standard.object(forKey: key) as? T ?? defaultValue
+            guard let data = UserDefaults.standard.data(forKey: key),
+                  let decoded = try? JSONDecoder().decode(T.self, from: data) else {
+                return defaultValue
+            }
+            return decoded
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: key)
+            let data = try? JSONEncoder().encode(newValue)
+            UserDefaults.standard.set(data, forKey: key)
         }
+    }
+    
+    func removeValue() {
+        UserDefaults.standard.removeObject(forKey: key)
     }
     
 }
@@ -29,14 +38,18 @@ final class UserDefaultsManager {
     private init() { }
     
     enum Key: String {
-        case food
-        case water
-        case level
+        case userInfo
     }
-    @DefaultsStruct(key: Key.food.rawValue, defaultValue: 0)
-    var foodValue
-    @DefaultsStruct(key: Key.water.rawValue, defaultValue: 0)
-    var waterValue
-    @DefaultsStruct(key: Key.level.rawValue, defaultValue: 0)
-    var levelValue
+    
+    @DefaultsStruct(
+        key: Key.userInfo.rawValue,
+        defaultValue: UserInfo(
+            iconData: nil,
+            nickname: "대장",
+            foodValue: 0,
+            waterValue: 0,
+            levelValue: 0
+        )
+    )
+    var userInfo
 }

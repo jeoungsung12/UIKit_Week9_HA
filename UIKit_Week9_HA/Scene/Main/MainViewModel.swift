@@ -9,6 +9,18 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+struct UserInfo: Codable {
+    var iconData: IconModel?
+    var nickname: String
+    var foodValue: Int
+    var waterValue: Int
+    var levelValue: Int
+    
+    var statusValue: String {
+        return "LV\(levelValue) • 밥알\(foodValue)개 • 물방울\(waterValue)개"
+    }
+}
+
 final class MainViewModel: BaseViewModel {
     private var disposeBag = DisposeBag()
     
@@ -17,7 +29,7 @@ final class MainViewModel: BaseViewModel {
     }
     
     struct Output {
-        
+        let userInfoResult: Driver<UserInfo>
     }
     
     init() {
@@ -33,9 +45,15 @@ final class MainViewModel: BaseViewModel {
 extension MainViewModel {
     
     func transform(_ input: Input) -> Output {
+        let userInfoResult = BehaviorRelay(value: self.getUserInfo())
         
-        
-        return Output()
+        return Output(
+            userInfoResult: userInfoResult.asDriver()
+        )
+    }
+    
+    private func getUserInfo() -> UserInfo {
+        return UserDefaultsManager.shared.userInfo
     }
     
 }

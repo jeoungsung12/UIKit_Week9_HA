@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-struct IconModel {
+struct IconModel: Codable {
     let image: String
     let title: String
     

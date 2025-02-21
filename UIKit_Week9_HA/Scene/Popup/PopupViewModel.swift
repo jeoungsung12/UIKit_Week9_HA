@@ -37,9 +37,9 @@ extension PopupViewModel {
         let icon: BehaviorRelay<IconModel> = BehaviorRelay(value: iconModel)
         
         let startResult: PublishSubject<Void?> = PublishSubject()
-        //TODO: UserDefaultsManager
         input.startBtnTrigger
             .bind(with: self) { owner, _ in
+                owner.setIcon()
                 startResult.onNext(())
             }
             .disposed(by: disposeBag)
@@ -48,6 +48,12 @@ extension PopupViewModel {
             startBtnResult: startResult.asDriver(onErrorJustReturn: nil),
             iconResult: icon.asDriver()
         )
+    }
+    
+    private func setIcon() {
+        var data = UserDefaultsManager.shared.userInfo
+        data.iconData = self.iconModel
+        UserDefaultsManager.shared.userInfo = data
     }
     
 }
