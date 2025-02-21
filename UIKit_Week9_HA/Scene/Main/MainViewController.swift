@@ -42,33 +42,29 @@ final class MainViewController: BaseViewController {
             .disposed(by: disposeBag)
         
         gameView.foodButton.rx.tap
-            .withLatestFrom(gameView.foodTextField.rx.text)
-            .bind(with: self, onNext: { owner, value in
-                input.foodBtnTrigger.onNext(value ?? "1")
+            .bind(with: self, onNext: { owner, _ in
+                input.foodBtnTrigger.onNext(owner.gameView.foodTextField.text ?? "1")
             })
             .disposed(by: disposeBag)
         
         gameView.waterButton.rx.tap
-            .withLatestFrom(gameView.waterTextField.rx.text)
-            .bind(with: self, onNext: { owner, value in
-                input.waterBtnTrigger.onNext(value ?? "1")
+            .bind(with: self, onNext: { owner, _ in
+                input.waterBtnTrigger.onNext(owner.gameView.waterTextField.text ?? "1")
             })
             .disposed(by: disposeBag)
         
         output.userInfoResult
             .drive(with: self) { owner, model in
-                owner.setNavigation(model.nickname + "님의 다마고치")
+                owner.setNavigation(model.title)
                 owner.profileView.configure(model.iconData)
                 owner.levelLabel.text = model.statusValue
+                owner.bubbleLabel.text = model.bubbleText
                 [owner.gameView.foodTextField, owner.gameView.waterTextField]
                     .forEach {
                         $0.text = nil
                     }
             }
             .disposed(by: disposeBag)
-        
-        //TODO: SetValue
-        bubbleLabel.text = "테이블뷰컨트롤러와 뷰컨트롤러는 어떤 차이가 있을까요?"
     }
     
     override func configureView() {

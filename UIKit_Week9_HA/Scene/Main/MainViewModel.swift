@@ -16,8 +16,21 @@ struct UserInfo: Codable {
     var waterValue: Int
     var levelValue: Int
     
+    var title: String {
+        return nickname + "님의 다마고치"
+    }
+    
     var statusValue: String {
         return "LV\(levelValue) • 밥알\(foodValue)개 • 물방울\(waterValue)개"
+    }
+    
+    var bubbleText: String {
+        let random = [
+            "님, 테이블뷰컨트롤러와 뷰컨트롤러는 어떤 차이가 있을까요?",
+            "님, 밥주세요”, “좋은 하루에요",
+            "님, 밥과 물을 잘먹었더니 레벨업 했어요 고마워요!"
+        ].randomElement()
+        return nickname + (random ?? "")
     }
 }
 
