@@ -9,8 +9,14 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+protocol SelectedDelegate: AnyObject {
+    func selectIcon()
+}
+
 final class PopupViewModel: BaseViewModel {
     private var disposeBag = DisposeBag()
+    weak var delegate: SelectedDelegate?
+    
     var iconModel: IconModel
     init(iconModel: IconModel) {
         self.iconModel = iconModel
@@ -39,8 +45,8 @@ extension PopupViewModel {
         let startResult: PublishSubject<Void?> = PublishSubject()
         input.startBtnTrigger
             .bind(with: self) { owner, _ in
-                owner.setIcon()
                 startResult.onNext(())
+                owner.setIcon()
             }
             .disposed(by: disposeBag)
         
@@ -55,5 +61,4 @@ extension PopupViewModel {
         data.iconData = self.iconModel
         UserDefaultsManager.shared.userInfo = data
     }
-    
 }

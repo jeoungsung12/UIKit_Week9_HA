@@ -15,7 +15,7 @@ final class SettingViewModel: BaseViewModel {
     enum SettingType: Int, CaseIterable {
         case setName
         case changeProfile
-        case reload
+        case reset
         
         var title: String {
             switch self {
@@ -23,7 +23,7 @@ final class SettingViewModel: BaseViewModel {
                 "내 이름 설정하기"
             case .changeProfile:
                 "다마고치 변경하기"
-            case .reload:
+            case .reset:
                 "데이터 초기화"
             }
         }
@@ -34,7 +34,7 @@ final class SettingViewModel: BaseViewModel {
                 "pencil"
             case .changeProfile:
                 "moon.fill"
-            case .reload:
+            case .reset:
                 "arrow.clockwise"
             }
         }
@@ -55,5 +55,10 @@ extension SettingViewModel {
     func transform(_ input: Input) -> Output {
         
         return Output()
+    }
+    
+    func removeUserInfo() {
+        
+        UserDefaultsManager.shared.removeValue(.userInfo)
     }
 }

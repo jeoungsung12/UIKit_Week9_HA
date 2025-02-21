@@ -39,9 +39,15 @@ final class SettingViewController: BaseViewController {
                 case .setName:
                     owner.push(SettingNameViewController())
                 case .changeProfile:
-                    owner.push(SettingNameViewController())
-                case .reload:
-                    owner.push(SettingNameViewController())
+                    owner.push(OnboardingViewController())
+                case .reset:
+                    owner.customAlert(
+                        "데이터 초기화",
+                        "정말 다시 시작하실 건가용?",
+                        [.cancel, .ok]) {
+                        owner.viewModel.removeUserInfo()
+                        owner.setRootView(OnboardingViewController())
+                    }
                 }
             }
             .disposed(by: disposeBag)

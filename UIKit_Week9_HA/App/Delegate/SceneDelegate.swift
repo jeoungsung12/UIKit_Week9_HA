@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let isUser = UserDefaultsManager.shared.userInfo
         window = UIWindow(windowScene: scene)
-        if let value = isUser.iconData {
+        if let _ = isUser.iconData {
             window?.rootViewController = UINavigationController(rootViewController: MainViewController())
         } else {
             window?.rootViewController = UINavigationController(rootViewController: OnboardingViewController())

@@ -26,8 +26,9 @@ struct UserInfo: Codable {
     
     var bubbleText: String {
         let random = [
+            "님, 복습 아직 안하셨다구요? 지금 잠이 오세여?",
             "님, 테이블뷰컨트롤러와 뷰컨트롤러는 어떤 차이가 있을까요?",
-            "님, 밥주세요”, “좋은 하루에요",
+            "님, 밥주세요, 좋은 하루에요",
             "님, 밥과 물을 잘먹었더니 레벨업 했어요 고마워요!"
         ].randomElement()
         return nickname + (random ?? "")
@@ -38,6 +39,7 @@ final class MainViewModel: BaseViewModel {
     private var disposeBag = DisposeBag()
     
     struct Input {
+        let reloadTrigger: PublishSubject<Void>
         let foodBtnTrigger: PublishSubject<String>
         let waterBtnTrigger: PublishSubject<String>
     }
@@ -82,6 +84,12 @@ extension MainViewModel {
                 }
                 userInfoResult.accept(owner.addWaterValue(value, userInfoResult))
                 owner.setUserInfo(userInfoResult.value)
+            }
+            .disposed(by: disposeBag)
+        
+        input.reloadTrigger
+            .bind(with: self) { owner, _ in
+                userInfoResult.accept(owner.getUserInfo())
             }
             .disposed(by: disposeBag)
         

@@ -26,10 +26,6 @@ struct DefaultsStruct<T: Codable> {
         }
     }
     
-    func removeValue() {
-        UserDefaults.standard.removeObject(forKey: key)
-    }
-    
 }
 
 final class UserDefaultsManager {
@@ -52,4 +48,8 @@ final class UserDefaultsManager {
         )
     )
     var userInfo
+    
+    func removeValue(_ key: Key) {
+        UserDefaults.standard.removeObject(forKey: key.rawValue)
+    }
 }

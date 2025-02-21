@@ -21,17 +21,23 @@ final class MainViewController: BaseViewController {
     private let gameView = GameView()
     
     private let viewModel = MainViewModel()
+    private let input = MainViewModel.Input(
+        reloadTrigger: PublishSubject<Void>(),
+        foodBtnTrigger: PublishSubject<String>(),
+        waterBtnTrigger: PublishSubject<String>()
+    )
     private var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        input.reloadTrigger.onNext(())
+    }
+    
     override func setBinding() {
-        let input = MainViewModel.Input(
-            foodBtnTrigger: PublishSubject<String>(),
-            waterBtnTrigger: PublishSubject<String>()
-        )
         let output = viewModel.transform(input)
         
         settingBarBtn.rx.tap
@@ -43,19 +49,19 @@ final class MainViewController: BaseViewController {
         
         gameView.foodButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
-                input.foodBtnTrigger.onNext(owner.gameView.foodTextField.text ?? "1")
+                owner.input.foodBtnTrigger.onNext(owner.gameView.foodTextField.text ?? "1")
             })
             .disposed(by: disposeBag)
         
         gameView.waterButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
-                input.waterBtnTrigger.onNext(owner.gameView.waterTextField.text ?? "1")
+                owner.input.waterBtnTrigger.onNext(owner.gameView.waterTextField.text ?? "1")
             })
             .disposed(by: disposeBag)
         
         output.userInfoResult
             .drive(with: self) { owner, model in
-                owner.setNavigation(model.title)
+                owner.setNavigation((model.title))
                 owner.profileView.configure(model.iconData)
                 owner.levelLabel.text = model.statusValue
                 owner.bubbleLabel.text = model.bubbleText

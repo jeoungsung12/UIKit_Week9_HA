@@ -6,6 +6,10 @@
 //
 
 import UIKit
+enum AlertType: String {
+    case ok = "웅"
+    case cancel = "아냐!"
+}
 
 extension UIViewController {
     
@@ -23,7 +27,7 @@ extension UIViewController {
     
     func setRootView(_ rootVC: UIViewController) {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let window = windowScene.windows.first else { return }
-        window.rootViewController = rootVC
+        window.rootViewController = UINavigationController(rootViewController: rootVC)
     }
     
     func setNavigation(_ title: String = "",_ backTitle: String = "",_ color: UIColor = .labelText, apperanceColor: UIColor = .background) {
@@ -37,12 +41,31 @@ extension UIViewController {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = apperanceColor
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.labelText]
 //        appearance.shadowColor = nil
         
         navigationBar.tintColor = color
         navigationBar.standardAppearance = appearance
         navigationBar.scrollEdgeAppearance = appearance
+    }
+    
+    
+    func customAlert(_ title: String = "",_ message: String = "",_ action: [AlertType] = [.ok],_ method: @escaping () -> Void) {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        for type in action {
+            switch type {
+            case .ok:
+                let action = UIAlertAction(title: type.rawValue, style: .default) { _ in
+                    method()
+                }
+                alertVC.addAction(action)
+            case .cancel:
+                let action = UIAlertAction(title: type.rawValue, style: .cancel)
+                alertVC.addAction(action)
+            }
+        }
+        self.present(alertVC, animated: true)
     }
     
 }
