@@ -12,6 +12,12 @@ import RxCocoa
 struct IconModel {
     let image: String
     let title: String
+    
+    var description: String {
+        get {
+            return "저는 \(title)입니다. " + "키는 100km 몸무게는 150톤이에용 성격은 화끈하고 날라다닙니당~! 열심히 잘 먹고 잘 클 자신은 있답니당 방실방실!"
+        }
+    }
 }
 
 final class OnboardingViewModel: BaseViewModel {

@@ -10,10 +10,9 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-final class DialogViewController: BaseViewController {
+final class PopupViewController: BaseViewController {
     private let containerView = UIView()
-    private let imageView = UIImageView()
-    private let titleLabel = UILabel()
+    private let profileView = ProfileView()
     private let spacer = UIView()
     private let descriptionLabel = UILabel()
     
@@ -21,12 +20,17 @@ final class DialogViewController: BaseViewController {
     private let cancelBtn = UIButton()
     private let startBtn = UIButton()
     
-    private let viewModel = DialogViewModel()
+    private let viewModel: PopupViewModel
     private var disposeBag = DisposeBag()
-    lazy var input = DialogViewModel.Input(
-        startBtnTrigger: startBtn.rx.tap,
-        iconImageTrigger: PublishSubject()
-    )
+
+    init(viewModel: PopupViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @MainActor required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,13 +41,19 @@ final class DialogViewController: BaseViewController {
     }
     
     override func setBinding() {
+        let input = PopupViewModel.Input(startBtnTrigger: startBtn.rx.tap)
         let output = viewModel.transform(input)
         
         output.iconResult
             .drive(with: self) { owner, model in
-                owner.titleLabel.text = model.title
-                owner.imageView.image = UIImage(named: model.image)
-                owner.descriptionLabel.text = model.title + owner.viewModel.descriptionText
+                owner.profileView.configure(model)
+                owner.descriptionLabel.text = model.description
+            }
+            .disposed(by: disposeBag)
+        
+        output.startBtnResult
+            .drive(with: self) { owner, _ in
+                owner.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
         
@@ -61,31 +71,24 @@ final class DialogViewController: BaseViewController {
         containerView.layer.cornerRadius = 10
         containerView.backgroundColor = .background
         
-        imageView.contentMode = .scaleAspectFit
-        
-        titleLabel.layer.borderWidth = 1
-        titleLabel.layer.cornerRadius = 5
-        titleLabel.backgroundColor = .labelBackground
-        titleLabel.font = .boldSystemFont(ofSize: 13)
-        titleLabel.layer.borderColor = UIColor.labelText.cgColor
-        
         descriptionLabel.numberOfLines = 0
         descriptionLabel.font = .systemFont(ofSize: 13, weight: .semibold)
         
         spacer.backgroundColor = .labelText
         
+        stackView.spacing = 0
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.distribution = .fillEqually
         
-        [titleLabel, descriptionLabel].forEach({
-            $0.textColor = .labelText
-            $0.textAlignment = .center
-        })
+        descriptionLabel.textColor = .labelText
+        descriptionLabel.textAlignment = .center
         
         cancelBtn.setTitle("취소", for: .normal)
         startBtn.setTitle("시작하기", for: .normal)
         [cancelBtn, startBtn].forEach({
+            $0.layer.borderWidth = 0.5
+            $0.layer.borderColor = UIColor.labelText.withAlphaComponent(0.5).cgColor
             $0.setTitleColor(.labelText, for: .normal)
             $0.titleLabel?.font = .boldSystemFont(ofSize: 15)
         })
@@ -96,7 +99,7 @@ final class DialogViewController: BaseViewController {
         [cancelBtn, startBtn].forEach({
             self.stackView.addArrangedSubview($0)
         })
-        [imageView, titleLabel, spacer, descriptionLabel, stackView].forEach({
+        [profileView, spacer, descriptionLabel, stackView].forEach({
             self.containerView.addSubview($0)
         })
         self.view.addSubview(containerView)
@@ -109,21 +112,15 @@ final class DialogViewController: BaseViewController {
             make.horizontalEdges.equalToSuperview().inset(28)
         }
         
-        imageView.snp.makeConstraints { make in
+        profileView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.height.equalToSuperview().dividedBy(2)
             make.top.horizontalEdges.equalToSuperview().inset(24)
         }
         
-        titleLabel.snp.makeConstraints { make in
-            make.width.equalTo(150)
-            make.top.equalTo(imageView.snp.bottom).offset(4)
-            make.horizontalEdges.equalToSuperview().inset(24)
-        }
-        
         spacer.snp.makeConstraints { make in
             make.height.equalTo(1)
-            make.top.equalTo(titleLabel.snp.bottom).offset(12)
+            make.top.equalTo(profileView.snp.bottom).offset(12)
             make.horizontalEdges.equalToSuperview().inset(48)
         }
         
@@ -133,14 +130,25 @@ final class DialogViewController: BaseViewController {
         }
         
         stackView.snp.makeConstraints { make in
+            make.height.equalTo(50)
             make.bottom.horizontalEdges.equalToSuperview()
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(12)
+            make.top.lessThanOrEqualTo(descriptionLabel.snp.bottom).offset(12)
+        }
+        
+        cancelBtn.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.bottom.equalToSuperview().offset(2)
+            make.leading.equalToSuperview().offset(-2)
+        }
+        
+        startBtn.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.bottom.trailing.equalToSuperview().offset(2)
         }
     }
     
     deinit {
         print(#function, self)
     }
-    
     
 }

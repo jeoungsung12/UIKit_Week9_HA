@@ -38,8 +38,10 @@ final class OnboardingViewController: BaseViewController {
         .observe(on: MainScheduler.instance)
         .bind(with: self) { owner, model in
             if !model.image.contains("no") {
-                let vc = DialogViewController()
-                vc.input.iconImageTrigger.onNext(model)
+                let vm = PopupViewModel(iconModel: model)
+                vm.delegate = self
+                
+                let vc = PopupViewController(viewModel: vm)
                 vc.modalTransitionStyle = .crossDissolve
                 vc.modalPresentationStyle = .overCurrentContext
                 self.present(vc, animated: true)
@@ -71,7 +73,7 @@ final class OnboardingViewController: BaseViewController {
     
 }
 
-extension OnboardingViewController {
+extension OnboardingViewController: SelectedDelegate {
     
     private func configureCollectionView() {
         collectionView.showsVerticalScrollIndicator = false
@@ -89,6 +91,10 @@ extension OnboardingViewController {
         layout.itemSize = CGSize(width: width, height: width + 50)
         layout.sectionInset = UIEdgeInsets(top: spacing, left: spacing, bottom: spacing, right: spacing)
         return layout
+    }
+    
+    func pushMain() {
+        self.push(MainViewController())
     }
     
 }
