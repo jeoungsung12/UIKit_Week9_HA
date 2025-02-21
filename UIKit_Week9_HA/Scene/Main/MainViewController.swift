@@ -32,21 +32,22 @@ final class MainViewController: BaseViewController {
                 owner.push(SettingViewController())
             }
             .disposed(by: disposeBag)
+        
+        //TODO: SetValue
+        setNavigation("대장님의 다마고치")
+        profileView.configure(IconModel(image: "1-6", title: "방실방실 다마고치"))
+        
+        bubbleLabel.text = "테이블뷰컨트롤러와 뷰컨트롤러는 어떠너 차이가 있을까요?"
+        levelLabel.text = "LV1 밥알0개 물방울0개"
     }
     
     override func configureView() {
-        //TODO: setValue
-        setNavigation("대장님의 다마고치")
         self.view.backgroundColor = .background
         self.navigationItem.rightBarButtonItem = settingBarBtn
         bubbleImageView.image = UIImage(named: "bubble")
         bubbleImageView.contentMode = .scaleToFill
         
-        profileView.configure(IconModel(image: "1-6", title: "방실방실 다마고치"))
-        
         bubbleLabel.numberOfLines = 0
-        bubbleLabel.text = "테이블뷰컨트롤러와 뷰컨트롤러는 어떠너 차이가 있을까요?"
-        levelLabel.text = "LV1 밥알0개 물방울0개"
         [bubbleLabel, levelLabel].forEach({
             $0.textColor = .labelText
             $0.textAlignment = .center

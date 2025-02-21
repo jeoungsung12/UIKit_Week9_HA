@@ -9,13 +9,8 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol SelectedDelegate: AnyObject {
-    func pushMain()
-}
-
 final class PopupViewModel: BaseViewModel {
     private var disposeBag = DisposeBag()
-    weak var delegate: SelectedDelegate?
     var iconModel: IconModel
     init(iconModel: IconModel) {
         self.iconModel = iconModel
@@ -46,7 +41,6 @@ extension PopupViewModel {
         input.startBtnTrigger
             .bind(with: self) { owner, _ in
                 startResult.onNext(())
-                owner.delegate?.pushMain()
             }
             .disposed(by: disposeBag)
         

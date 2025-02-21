@@ -54,6 +54,7 @@ final class PopupViewController: BaseViewController {
         output.startBtnResult
             .drive(with: self) { owner, _ in
                 owner.dismiss(animated: true)
+                owner.setRootView(MainViewController())
             }
             .disposed(by: disposeBag)
         

@@ -47,6 +47,7 @@ final class SettingViewController: BaseViewController {
     
     override func configureView() {
         setNavigation("설정")
+        self.view.backgroundColor = .background
         tableView.showsVerticalScrollIndicator = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
     }
