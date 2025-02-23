@@ -12,6 +12,7 @@ import RxCocoa
 
 final class SettingViewController: BaseViewController {
     private let tableView = UITableView()
+    private let nameLabel = UILabel()
     private let viewModel = SettingViewModel()
     private var disposeBag = DisposeBag()
     
@@ -19,15 +20,35 @@ final class SettingViewController: BaseViewController {
         super.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        nameLabel.text = viewModel.getNickname()
+    }
+    
     override func setBinding() {
         SettingViewModel.Output().settingList
             .asDriver()
-            .drive(tableView.rx.items(cellIdentifier: "Cell", cellType: UITableViewCell.self)) { row, element, cell in
+            .drive(tableView.rx.items(cellIdentifier: "Cell", cellType: UITableViewCell.self)) { [weak self] row, element, cell in
                 cell.tintColor = .labelText
                 cell.backgroundColor = .background
                 cell.textLabel?.text = element.title
                 cell.contentView.backgroundColor = .background
                 cell.imageView?.image = UIImage(systemName: element.image)
+                cell.accessoryView = nil
+                cell.selectionStyle = .none
+                cell.accessoryType = .disclosureIndicator
+                switch SettingViewModel.SettingType.allCases[row] {
+                case .setName:
+                    guard let nameLabel = self?.nameLabel else { return }
+                    cell.addSubview(nameLabel)
+                    nameLabel.snp.makeConstraints { make in
+                        make.width.equalTo(100)
+                        make.centerY.verticalEdges.equalToSuperview()
+                        make.horizontalEdges.equalToSuperview().inset(48)
+                    }
+                default:
+                    print(#function)
+                }
             }
             .disposed(by: disposeBag)
             
@@ -56,6 +77,12 @@ final class SettingViewController: BaseViewController {
     override func configureView() {
         setNavigation("설정")
         self.view.backgroundColor = .background
+        
+        nameLabel.font = .boldSystemFont(ofSize: 12)
+        nameLabel.textColor = .lightGray
+        nameLabel.textAlignment = .right
+        
+        tableView.rowHeight = 40
         tableView.backgroundColor = .background
         tableView.showsVerticalScrollIndicator = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")

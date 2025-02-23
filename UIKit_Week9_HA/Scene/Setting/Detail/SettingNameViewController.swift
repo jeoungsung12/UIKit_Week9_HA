@@ -38,6 +38,7 @@ final class SettingNameViewController: BaseViewController {
                 if !text.isEmpty {
                     input.saveBtnTrigger.onNext(text)
                     owner.nameTextField.text = nil
+                    owner.pop()
                 } else {
                     owner.customAlert("이름은 2글자 이상 6글자 이하까지 가능합니다.") { }
                 }

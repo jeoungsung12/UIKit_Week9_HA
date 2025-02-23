@@ -57,8 +57,11 @@ extension SettingViewModel {
         return Output()
     }
     
+    func getNickname() -> String {
+        return UserDefaultsManager.shared.userInfo.nickname
+    }
+    
     func removeUserInfo() {
-        
         UserDefaultsManager.shared.removeValue(.userInfo)
     }
 }
